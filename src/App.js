@@ -1,25 +1,52 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import {
+  Redirect,
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+} from "react-router-dom";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+import { DatePicker, message, Alert } from "antd";
+import "./App.css";
+//Compnents import
+import Home from "./Components/Home";
+import About from "./Components/About";
+import Loan from "./Components/Loan";
+import { Spin } from "antd";
+const center = {
+  position: "absolute",
+  left: "50%",
+  top: "50%",
+  WebkitTransform: "translate(-50%, -50%)",
+  transform: "translate(-50%, -50%)",
+};
+
+export default class App extends React.Component {
+  state = {
+    date: null,
+  };
+
+  handleChange = (date) => {
+    message.info(`Selected Date: ${date ? date.format("YYYY-MM-DD") : "None"}`);
+    this.setState({ date });
+  };
+
+  render() {
+    return (
+      <div>
+        <Router>
+          <div>
+            {/*<Nav/>*/}
+
+            <Switch>
+              <Route path="/predictmyloan" component={Loan} />
+              <Route path="/About" component={About} />
+              <Route path="/**/" component={Home} />
+            </Switch>
+          </div>
+        </Router>
+      </div>
+    );
+  }
 }
-
-export default App;
