@@ -18,8 +18,8 @@ class About extends React.Component {
     return (
       <Layout>
         <SideBar />
-        <Header />
         <Layout>
+          <Header />
           <Content
             style={{
               margin: "24px 16px",
@@ -35,10 +35,8 @@ class About extends React.Component {
 
             <p className="text-muted">create a new account</p>
           </div> */}
-            <div
-              style={{ padding: 24, background: "#fff", minHeight: 360 }}
-                    >
-                        <p>You are in about</p>
+            <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+              <p>You are in about</p>
             </div>
           </Content>
 

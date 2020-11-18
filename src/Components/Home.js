@@ -17,8 +17,9 @@ class Home extends React.Component {
     return (
       <Layout>
         <SideBar />
-        <Header />
+
         <Layout>
+          <Header />
           <Content
             style={{
               margin: "24px 16px",
