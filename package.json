@@ -17,9 +17,9 @@
     "styled-components": "^5.2.1",
     "web-vitals": "^0.2.4"
   },
-  "scripts": {
-    "start": "npm run dev",
-    "build": "npm run build",
+ "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
