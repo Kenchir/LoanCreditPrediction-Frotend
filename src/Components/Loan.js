@@ -54,18 +54,17 @@ class Loan extends React.Component {
   };
 
   render() {
-    const { getFieldDecorator } = this.props.form;
     const { form } = this.props;
 
     return (
       <Layout>
-        <SideBar />
+        <SideBar selectedKeys={["3"]}/>
        
-        <Layout>
+        <Layout >
           <Header />
           <Content
             style={{
-              margin: "24px 16px",
+              margin: "24px 16px 0",
               padding: 24,
               background: "#fff",
               minHeight: 280,
@@ -78,7 +77,7 @@ class Loan extends React.Component {
 
             <p className="text-muted">create a new account</p>
           </div> */}
-            <div style={{ padding: 24, background: "#fff", minHeight: 360 }}>
+            <div style={{  background: "#fff", minHeight: 360 }}>
               <div type="flex" align="middle" justify="center">
                 <h1>Loan Eligibility Prediction</h1>
 

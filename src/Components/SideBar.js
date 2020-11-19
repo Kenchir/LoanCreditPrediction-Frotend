@@ -7,11 +7,11 @@ class SiderBar extends React.Component {
   state = {
     collapsed: this.props.collapsed,
   };
-  handleClick = (e) => {
-    console.log(e);
-    if (e.key === "1") {
+  handleClick = ({ key }) => {
+    if (key === "1") {
+      this.setState();
       this.props.history.push("/");
-    } else if (e.key === "2") {
+    } else if (key === "2") {
       this.props.history.push("/About");
     } else {
       this.props.history.push("/predictmyloan");
@@ -20,7 +20,7 @@ class SiderBar extends React.Component {
   render() {
     return (
       <Sider
-        breakpoint="lg"
+        breakpoint="md"
         collapsedWidth="0"
         onCollapse={(collapsed, type) => {
           console.log(collapsed, type);
@@ -31,6 +31,7 @@ class SiderBar extends React.Component {
           theme="dark"
           mode="inline"
           defaultSelectedKeys={["1"]}
+          selectedKeys={this.props.selectedKeys}
           onClick={(e) => this.handleClick(e)}
         >
           <Menu.Item key="1">

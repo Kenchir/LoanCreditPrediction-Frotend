@@ -16,7 +16,7 @@ class Home extends React.Component {
   render() {
     return (
       <Layout>
-        <SideBar />
+        <SideBar selectedKeys={["1"]} />
 
         <Layout>
           <Header />

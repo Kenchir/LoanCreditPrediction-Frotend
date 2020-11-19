@@ -14,6 +14,12 @@ import Home from "./Components/Home";
 import About from "./Components/About";
 import Loan from "./Components/Loan";
 import { Spin } from "antd";
+
+//Remove all consol1e.logs on pro1duction by1 setting  console.log to empty function
+if (process.env.NODE_ENV === "production") {
+  console.log = function () {};
+}
+
 const center = {
   position: "absolute",
   left: "50%",
@@ -40,9 +46,10 @@ export default class App extends React.Component {
             {/*<Nav/>*/}
 
             <Switch>
+              <Route path="/home" component={Home} />
               <Route path="/predictmyloan" component={Loan} />
               <Route path="/About" component={About} />
-              <Route path="/**/" component={Home} />
+              <Route path="/*" component={Home} />
             </Switch>
           </div>
         </Router>
