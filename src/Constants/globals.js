@@ -1,4 +1,4 @@
 const globals = {
-  BASE_URL: "http://35.246.149.29:xxx",
+  BASE_URL: "https://loan-pred-back.herokuapp.com",
 };
 export default globals;

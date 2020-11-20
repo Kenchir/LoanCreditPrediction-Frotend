@@ -7,42 +7,93 @@ import {
   Row,
   Col,
   DatePicker,
+  Modal,
   Layout,
   Radio,
-  Checkbox,
+  Spin,
+  Icon,
+  Result,
+  Descriptions,
   Button,
-  AutoComplete,
 } from "antd";
 import moment from "moment";
-import { Eye, HelpCircle, Mail, Triangle, User } from "react-feather";
+import { HelpCircle, Mail, User } from "react-feather";
 import { withRouter } from "react-router-dom";
-import styled from "styled-components";
+
 import globals from "../Constants/globals";
 import Header from "../Components/Header";
 import Footer from "./Footer";
 import SideBar from "../Components/SideBar";
 const FormItem = Form.Item;
-const { MonthPicker, RangePicker } = DatePicker;
+
 const { Content } = Layout;
 const { Option } = Select;
-const AutoCompleteOption = AutoComplete.Option;
+const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
 
 class Loan extends React.Component {
   state = {
     confirmDirty: false,
     autoCompleteResult: [],
     collapsed: false,
+    loading: false,
+    modalVisible: false,
+    loanData: {},
   };
 
-  handleSubmit = (e) => {
+  handleSubmit = async (e) => {
     e.preventDefault();
-    this.props.form.validateFieldsAndScroll((err, values) => {
+
+    this.props.form.validateFieldsAndScroll(async (err, values) => {
       if (!err) {
-        console.log("Received values of form: ", values);
+        const Age = moment().endOf("day").diff(values.DateOfBirth, "years");
+        let data = { ...values, Age };
+        this.setState({ loading: true });
+        try {
+          const response = await fetch(
+            `${globals.BASE_URL}/api/predictCreditAmount/CreditLoanStatus`,
+            {
+              method: "POST",
+              headers: {
+                Authorization: this.props.token,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({ ...data }),
+            }
+          );
+          if (response.ok) {
+            const {
+              awardedLoan,
+              LoanAmount,
+             
+              maxLoanAmountEligible,
+              loanInterest,
+              totalLoanToBeRepaid,
+            } = await response.json();
+            let loanData = {
+              awardedLoan,
+              LoanAmount,
+              maxLoanAmountEligible,
+              loanInterest,
+              totalLoanToBeRepaid,
+            };
+            this.setState({ loanData, loading: false, modalVisible: true });
+          } else {
+            console.log(response)
+            console.log("error");
+          }
+        } catch {
+          console.log("error");
+        }
       }
     });
   };
 
+  onOk = () => {
+    this.setState({ modalVisible: false });
+  };
+  onCancel = () => {
+    this.onOk();
+  };
   handleConfirmBlur = (e) => {
     const { value } = e.target;
     this.setState({ confirmDirty: this.state.confirmDirty || !!value });
@@ -55,12 +106,12 @@ class Loan extends React.Component {
 
   render() {
     const { form } = this.props;
-
+    const { state } = this;
     return (
       <Layout>
-        <SideBar selectedKeys={["3"]}/>
-       
-        <Layout >
+        <SideBar selectedKeys={["3"]} />
+
+        <Layout>
           <Header />
           <Content
             style={{
@@ -77,7 +128,7 @@ class Loan extends React.Component {
 
             <p className="text-muted">create a new account</p>
           </div> */}
-            <div style={{  background: "#fff", minHeight: 360 }}>
+            <div style={{ background: "#fff", minHeight: 360 }}>
               <div type="flex" align="middle" justify="center">
                 <h1>Loan Eligibility Prediction</h1>
 
@@ -87,6 +138,70 @@ class Loan extends React.Component {
                 </p>
               </div>
 
+              <Modal
+                centered
+                style={{ top: 20 }}
+                visible={this.state.modalVisible}
+                onOk={() => this.onOk(false)}
+                onCancel={() => this.onCancel(false)}
+              >
+                {state.loanData.awardedLoan ? (
+                  <Result
+                    status="success"
+                    title="Loan application accepted"
+                    subTitle=""
+                    extra={[
+                      <Descriptions title="Loan Details">
+                        <Descriptions.Item label="Loan Awarded">
+                          <i>Ksh</i>{" "}
+                          <strong>{state.loanData.LoanAmount}</strong>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Interest">
+                          <i>Ksh</i>{" "}
+                          <strong>{state.loanData.loanInterest}</strong>
+                        </Descriptions.Item>
+                        <Descriptions.Item label="Total Repayable">
+                          <i>Ksh</i>{" "}
+                          <strong> {state.loanData.totalLoanToBeRepaid}</strong>
+                        </Descriptions.Item>
+                      </Descriptions>,
+                    ]}
+                  />
+                ) : (
+                  <>
+                    {state.loanData.maxLoanAmountEligible > 0 ? (
+                      <Result
+                        status="warning"
+                        title="Loan application denied"
+                        subTitle="The amount you applied was more than your limit"
+                        extra={[
+                          <Descriptions>
+                            <Descriptions.Item label="Your loan limit is">
+                              <i>Ksh</i>{" "}
+                              <strong>
+                                {state.loanData.maxLoanAmountEligible}
+                              </strong>
+                            </Descriptions.Item>
+                          </Descriptions>,
+                          <Button
+                            type="primary"
+                            key="console"
+                            onClick={()=>this.onOk(false)}
+                          >
+                            Apply Again
+                          </Button>,
+                        ]}
+                      />
+                    ) : (
+                      <Result
+                        status="error"
+                        title="Loan application rejected"
+                        subTitle="Your loan  limit is Ksh 0.00"
+                      />
+                    )}
+                  </>
+                )}
+              </Modal>
               <Form layout="vertical" onSubmit={this.handleSubmit}>
                 <Row gutter={[48, 24]}>
                   <Col
@@ -104,7 +219,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("name", {
+                      {form.getFieldDecorator("ApplicantName", {
                         rules: [
                           {
                             required: true,
@@ -135,7 +250,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("Maritalstatus", {
+                      {form.getFieldDecorator("Married", {
                         rules: [
                           {
                             required: true,
@@ -143,14 +258,14 @@ class Loan extends React.Component {
                           },
                         ],
                       })(
-                        <Select placeholder="Please Marital status">
+                        <Select placeholder="Please choose Marital status">
                           <Option value="Married">Married</Option>
                           <Option value="Single">Single</Option>
                         </Select>
                       )}
                     </FormItem>
-                    <FormItem label={<span>Employement Status&nbsp;</span>}>
-                      {form.getFieldDecorator("employmentStatus", {
+                    <FormItem label={<span>Gender&nbsp;</span>}>
+                      {form.getFieldDecorator("Gender", {
                         rules: [
                           {
                             required: true,
@@ -159,24 +274,23 @@ class Loan extends React.Component {
                           },
                         ],
                       })(
-                        <Select placeholder="Employment status">
-                          <Option value="employed">Employed</Option>
-                          <Option value="selfEmployed">Self Employed</Option>
-                          <Option value="Unemployed">Unemployed</Option>
+                        <Select placeholder="Gender">
+                          <Option value="Male">Male</Option>
+                          <Option value="Female">Female</Option>
                         </Select>
                       )}
                     </FormItem>
                     <FormItem
                       label={
                         <span>
-                          Current Salary&nbsp;
+                          Current Income&nbsp;
                           <Tooltip title="How much do you earn right now?">
                             <HelpCircle size={16} strokeWidth={1} />
                           </Tooltip>
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("currentSalary", {
+                      {form.getFieldDecorator("ApplicantIncome", {
                         rules: [
                           {
                             pattern: new RegExp(/^-?[0-9]*(\.[0-9]*)?$/),
@@ -215,7 +329,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("date-picker", {
+                      {form.getFieldDecorator("DateOfBirth", {
                         rules: [
                           {
                             type: "object",
@@ -241,7 +355,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("education", {
+                      {form.getFieldDecorator("Education", {
                         rules: [
                           {
                             required: true,
@@ -286,7 +400,7 @@ class Loan extends React.Component {
                       )}
                     </FormItem>
                     <FormItem label="Residential Location">
-                      {form.getFieldDecorator("residence", {
+                      {form.getFieldDecorator("Property_Area", {
                         rules: [
                           {
                             required: true,
@@ -316,7 +430,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("existingLoan", {
+                      {form.getFieldDecorator("Credit_History", {
                         rules: [
                           {
                             required: true,
@@ -326,7 +440,7 @@ class Loan extends React.Component {
                       })(
                         <Radio.Group>
                           <Radio value="yes">Yes</Radio>
-                          <Radio value="No">No</Radio>
+                          <Radio value="no">No</Radio>
                         </Radio.Group>
                       )}
                     </FormItem>
@@ -341,7 +455,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("dependents", {
+                      {form.getFieldDecorator("Dependents", {
                         rules: [
                           {
                             required: true,
@@ -360,7 +474,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("loanAmount", {
+                      {form.getFieldDecorator("LoanAmount", {
                         rules: [
                           {
                             required: true,
@@ -379,7 +493,7 @@ class Loan extends React.Component {
                         </span>
                       }
                     >
-                      {form.getFieldDecorator("repaymentPeriod", {
+                      {form.getFieldDecorator("RepaymentPeriod", {
                         rules: [
                           {
                             required: true,
@@ -400,11 +514,15 @@ class Loan extends React.Component {
                 </Row>
                 <Row>
                   <div type="flex" align="middle" justify="center">
-                    <Form.Item>
-                      <Button type="primary" htmlType="submit">
-                        Submit
-                      </Button>
-                    </Form.Item>
+                    {this.state.loading ? (
+                      <Spin indicator={antIcon} />
+                    ) : (
+                      <Form.Item>
+                        <Button type="primary" htmlType="submit">
+                          Submit
+                        </Button>
+                      </Form.Item>
+                    )}
                   </div>
                 </Row>
               </Form>
