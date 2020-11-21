@@ -13,7 +13,7 @@ import "./App.css";
 import Home from "./Components/Home";
 import About from "./Components/About";
 import Loan from "./Components/Loan";
-import { Spin } from "antd";
+import NotFoundPage from "./Components/NotFound";
 
 //Remove all consol1e.logs on pro1duction by1 setting  console.log to empty function
 if (process.env.NODE_ENV === "production") {
@@ -46,10 +46,10 @@ export default class App extends React.Component {
             {/*<Nav/>*/}
 
             <Switch>
-              <Route path="/home" component={Home} />
               <Route path="/predictmyloan" component={Loan} />
               <Route path="/About" component={About} />
-              <Route path="/*" component={Home} />
+              <Route exact path="/" component={Home} />
+              <Route component={NotFoundPage} />
             </Switch>
           </div>
         </Router>
