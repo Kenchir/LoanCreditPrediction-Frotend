@@ -8,4 +8,4 @@ build:
   config:
     NODE_ENV: production
 run:
-  web: bin/boot
+  web: serve -s build

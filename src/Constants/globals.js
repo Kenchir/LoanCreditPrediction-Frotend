@@ -1,7 +1,6 @@
 const prod = {
   url: {
-    API_URL:
-      "https://cors-anywhere.herokuapp.com/https://loan-pred-back.herokuapp.com",
+    API_URL: process.env.REACT_APP_API_URL,
   },
 };
 
