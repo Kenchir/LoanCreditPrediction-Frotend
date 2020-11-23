@@ -1,5 +1,5 @@
 import React from 'react';
-import { Layout, Icon } from 'antd';
+import { Layout } from 'antd';
 
 const {Header } = Layout;
 
@@ -10,7 +10,7 @@ export default class MyFooter extends  React.Component{
 render(){
     return(
 
-      <Header style={{ background: '#fff', padding: 0,height:100 }} />
+      <Header style={{ background: '#fff', padding: 0,height:50 }} />
       
     )
     }

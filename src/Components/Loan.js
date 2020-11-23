@@ -29,7 +29,9 @@ const FormItem = Form.Item;
 const { Content } = Layout;
 const { Option } = Select;
 const antIcon = <Icon type="loading" style={{ fontSize: 24 }} spin />;
-
+if (process.env.NODE_ENV === "production") {
+  console.log = function () {};
+}
 console.log(globals);
 class Loan extends React.Component {
   state = {

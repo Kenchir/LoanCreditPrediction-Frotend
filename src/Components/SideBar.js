@@ -40,7 +40,7 @@ class SiderBar extends React.Component {
           </Menu.Item>
           <Menu.Item key="2">
             <Icon type="profile" />
-            <span className="nav-text">About</span>
+            <span className="nav-text">About </span>
           </Menu.Item>
           <Menu.Item key="3">
             <Icon type="dollar" />

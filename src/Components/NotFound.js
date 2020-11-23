@@ -1,5 +1,5 @@
 import React from "react";
-import { Layout, Result, Button } from "antd";
+import { Layout, Result } from "antd";
 import { withRouter } from "react-router-dom";
 import Header from "../Components/Header";
 import Footer from "./Footer";
