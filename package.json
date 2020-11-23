@@ -7,6 +7,7 @@
     "@testing-library/react": "^11.1.0",
     "@testing-library/user-event": "^12.1.10",
     "antd": "^3.26.20",
+    "env-cmd": "^10.1.0",
     "mdbootstrap": "^4.19.1",
     "mdbreact": "^4.27.0",
     "react": "^17.0.1",
@@ -17,10 +18,10 @@
     "styled-components": "^5.2.1",
     "web-vitals": "^0.2.4"
   },
- "scripts": {
+  "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "build:staging": "env-cmd -f .env.staging npm run build",
+    "build:staging": "env-cmd .env npm run build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
@@ -42,7 +43,6 @@
       "last 1 safari version"
     ]
   },
-  
   "jest": {
     "transformIgnorePatterns": [
       "/node_modules/(?!antd|@ant-design|rc-.+?|@babel/runtime).+(js|jsx)$"
